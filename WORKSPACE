@@ -51,6 +51,12 @@ http_archive(
 # 2020-08-21
 http_archive(
     name = "com_github_glog_glog",
+    patch_args = [
+        "-p1",
+    ],
+    patches = [
+        "@//third_party:y9-com_github_glog_glog.diff",
+    ],
     sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
     strip_prefix = "glog-0.6.0",
     urls = [

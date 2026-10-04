@@ -1,0 +1,14 @@
+diff --git "a/src/signalhandler.cc" "b/src/signalhandler.cc"
+index 92957f4e4..657e15c08 100644
+--- "a/src/signalhandler.cc"
++++ "b/src/signalhandler.cc"
+@@ -45,9 +45,6 @@
+ # include <sys/ucontext.h>
+ #endif
+ #include <algorithm>
++#ifdef __MINGW32__
++#include <unistd.h>
++#endif
+ 
+ _START_GOOGLE_NAMESPACE_
+ 
