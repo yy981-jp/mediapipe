@@ -140,12 +140,6 @@ http_archive(
 # 2020-08-21
 http_archive(
     name = "com_github_glog_glog",
-    patch_args = [
-        "-p1",
-    ],
-    patches = [
-        "@//third_party:y9-com_github_glog_glog.diff",
-    ],
     sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
     strip_prefix = "glog-0.6.0",
     urls = [
@@ -180,6 +174,7 @@ http_archive(
     patches = [
         "@//third_party:com_github_glog_glog.diff",
         "@//third_party:com_github_glog_glog_windows_patch.diff",
+        "@//third_party:y9-com_github_glog_glog.diff",
     ],
     sha256 = "170d08f80210b82d95563f4723a15095eff1aad1863000e8eeb569c96a98fefb",
     strip_prefix = "glog-3a0d4d22c5ae0b9a2216988411cfa6bf860cc372",
@@ -795,6 +790,10 @@ cc_crosstool(name = "crosstool")
 # Node dependencies
 http_archive(
     name = "build_bazel_rules_nodejs",
+    patch_args = ["-p1"],
+    patches = [
+        "@//third_party:y9-build_bazel_rules_nodejs.diff",
+    ],
     sha256 = "a1295b168f183218bc88117cf00674bcd102498f294086ff58318f830dd9d9d1",
     urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.5/rules_nodejs-5.8.5.tar.gz"],
 )

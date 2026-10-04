@@ -1,7 +1,7 @@
-diff --git "a/internal/npm_install/npm_install.bzl" "b/internal/npm_install/npm_install.bzl"
+diff --git a/internal/npm_install/npm_install.bzl b/internal/npm_install/npm_install.bzl
 index 77f5778b8..b008921b8 100644
---- "a/internal/npm_install/npm_install.bzl"
-+++ "b/internal/npm_install/npm_install.bzl"
+--- a/internal/npm_install/npm_install.bzl
++++ b/internal/npm_install/npm_install.bzl
 @@ -948,8 +948,8 @@ unset npm_config_registry
              "_yarn.cmd",
              content = """@echo off
