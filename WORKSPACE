@@ -311,6 +311,10 @@ http_archive(
 # 2025-09-08
 http_archive(
     name = "cpuinfo",
+    patch_args = ["-p1"],
+    patches = [
+        "@//third_party:y9-cpuinfo-mingw-win7-api.diff",
+    ],
     sha256 = "c0254ce97f7abc778dd2df0aaca1e0506dba1cd514fdb9fe88c07849393f8ef4",
     strip_prefix = "cpuinfo-8a9210069b5a37dd89ed118a783945502a30a4ae",
     urls = [
@@ -350,6 +354,7 @@ http_archive(
         # y9 fix
 		"@//third_party:y9-org_tensorflow.diff",
 		"@//third_party:y9-org_tensorflow_mingw_farmhash.diff",
+        "@//third_party:y9-org_tensorflow_mingw_eigen_flags.diff",
     ],
     sha256 = _TENSORFLOW_SHA256,
     strip_prefix = "tensorflow-%s" % _TENSORFLOW_GIT_COMMIT,
@@ -647,7 +652,7 @@ new_local_repository(
 new_local_repository(
     name = "windows_opencv",
     build_file = "@//third_party:opencv_windows.BUILD",
-    path = "C:\\opencv\\build",
+    path = "c:/msys64/mingw64",
 )
 
 # protobuf requires @system_python in WORKSPACE

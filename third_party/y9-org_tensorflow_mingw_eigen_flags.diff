@@ -1,0 +1,8 @@
+diff --git a/tensorflow/lite/kernels/BUILD b/tensorflow/lite/kernels/BUILD
+--- a/tensorflow/lite/kernels/BUILD
++++ b/tensorflow/lite/kernels/BUILD
+@@ -62,2 +62,2 @@
+-        "/DEIGEN_HAS_C99_MATH",
+-        "/DEIGEN_AVOID_STL_ARRAY",
++        "-DEIGEN_HAS_C99_MATH",
++        "-DEIGEN_AVOID_STL_ARRAY",

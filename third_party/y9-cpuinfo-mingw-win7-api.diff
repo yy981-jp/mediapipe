@@ -1,0 +1,14 @@
+diff --git a/BUILD.bazel b/BUILD.bazel
+--- a/BUILD.bazel
++++ b/BUILD.bazel
+@@ -162,6 +162,9 @@ cc_library(
+     }),
+     copts = select({
+-        ":windows_x86_64": [],
++        ":windows_x86_64": [
++            "-U_WIN32_WINNT",
++            "-D_WIN32_WINNT=0x0601",
++        ],
+         ":windows_arm64": [],
+         "//conditions:default": C99OPTS,
+     }) + [

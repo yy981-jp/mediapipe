@@ -23,6 +23,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #else
 #include <opencv2/imgproc.hpp>
+#if CV_VERSION_MAJOR >= 5
+#include <opencv2/geometry.hpp>
+#endif
 #if CV_VERSION_MAJOR == 4
 #include <opencv2/imgproc/types_c.h>
 #endif

@@ -8,3 +8,17 @@ diff --git a/third_party/xla/third_party/farmhash/farmhash.BUILD b/third_party/x
 +        ":windows": ["-DFARMHASH_OPTIONAL_BUILTIN_EXPECT"],
          "//conditions:default": [],
      }),
+
+
+
+
+diff --git a/tensorflow/compiler/mlir/lite/build_def.bzl b/tensorflow/compiler/mlir/lite/build_def.bzl
+--- a/tensorflow/compiler/mlir/lite/build_def.bzl
++++ b/tensorflow/compiler/mlir/lite/build_def.bzl
+@@ -43,4 +43,4 @@
+             # copybara:uncomment_end_and_comment_begin
+-            "/DTFL_COMPILE_LIBRARY",
+-            "/wd4018",  # -Wno-sign-compare
++            "-DTFL_COMPILE_LIBRARY",
++            "-Wno-sign-compare",  # -Wno-sign-compare
+             # copybara:comment_end
