@@ -1,0 +1,10 @@
+diff --git a/third_party/xla/third_party/farmhash/farmhash.BUILD b/third_party/xla/third_party/farmhash/farmhash.BUILD
+--- a/third_party/xla/third_party/farmhash/farmhash.BUILD
++++ b/third_party/xla/third_party/farmhash/farmhash.BUILD
+@@ -14,5 +14,5 @@
+     # Disable __builtin_expect support on Windows
+     copts = select({
+-        ":windows": ["/DFARMHASH_OPTIONAL_BUILTIN_EXPECT"],
++        ":windows": ["-DFARMHASH_OPTIONAL_BUILTIN_EXPECT"],
+         "//conditions:default": [],
+     }),

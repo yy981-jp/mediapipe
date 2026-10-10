@@ -3,37 +3,30 @@
 
 licenses(["notice"])  # BSD license
 
-exports_files(["LICENSE"])
-
-OPENCV_VERSION = "3410"  # 3.4.10
-
-config_setting(
-    name = "opt_build",
-    values = {"compilation_mode": "opt"},
-)
-
-config_setting(
-    name = "dbg_build",
-    values = {"compilation_mode": "dbg"},
-)
-
-# The following build rule assumes that the executable "opencv-3.4.10-vc14_vc15.exe"
-# is downloaded and the files are extracted to local.
-# If you install OpenCV separately, please modify the build rule accordingly.
 cc_library(
     name = "opencv",
-    srcs = select({
-        ":opt_build": [
-            "x64/vc15/lib/opencv_world" + OPENCV_VERSION + ".lib",
-            "x64/vc15/bin/opencv_world" + OPENCV_VERSION + ".dll",
-        ],
-        ":dbg_build": [
-            "x64/vc15/lib/opencv_world" + OPENCV_VERSION + "d.lib",
-            "x64/vc15/bin/opencv_world" + OPENCV_VERSION + "d.dll",
-        ],
-    }),
-    hdrs = glob(["include/opencv2/**/*.h*"]),
-    includes = ["include/"],
+    srcs = [
+        "lib/libopencv_calib.dll.a",
+        "lib/libopencv_features.dll.a",
+        "lib/libopencv_highgui.dll.a",
+        "lib/libopencv_video.dll.a",
+        "lib/libopencv_videoio.dll.a",
+        "lib/libopencv_imgcodecs.dll.a",
+        "lib/libopencv_imgproc.dll.a",
+        "lib/libopencv_core.dll.a",
+    ],
+    hdrs = glob(["include/opencv5/opencv2/**/*.h*"]),
+    includes = ["include/opencv5"],
+    data = [
+        "bin/libopencv_calib-500.dll",
+        "bin/libopencv_features-500.dll",
+        "bin/libopencv_highgui-500.dll",
+        "bin/libopencv_video-500.dll",
+        "bin/libopencv_videoio-500.dll",
+        "bin/libopencv_imgcodecs-500.dll",
+        "bin/libopencv_imgproc-500.dll",
+        "bin/libopencv_core-500.dll",
+    ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
 )

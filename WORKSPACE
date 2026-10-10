@@ -347,6 +347,9 @@ http_archive(
         # Works around Bazel issue with objc_library.
         # See https://github.com/bazelbuild/bazel/issues/19912
         "@//third_party:org_tensorflow_objc_build_fixes.diff",
+        # y9 fix
+		"@//third_party:y9-org_tensorflow.diff",
+		"@//third_party:y9-org_tensorflow_mingw_farmhash.diff",
     ],
     sha256 = _TENSORFLOW_SHA256,
     strip_prefix = "tensorflow-%s" % _TENSORFLOW_GIT_COMMIT,
@@ -961,4 +964,9 @@ http_archive(
     sha256 = "d15ebab765d793e2e96db090f0e172d127859d78ca6f6391d7eafecfd894bbc0",
     strip_prefix = "curl-8.10.1",
     url = "https://curl.haxx.se/download/curl-8.10.1.tar.gz",
+)
+
+local_repository(
+    name = "sxmp",
+    path = "../..",
 )

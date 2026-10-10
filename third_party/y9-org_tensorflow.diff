@@ -1,0 +1,56 @@
+index f11ef73..7722793 100644
+--- a/tensorflow/lite/build_def.bzl
++++ b/tensorflow/lite/build_def.bzl
+@@ -46,8 +46,8 @@ def tflite_copts():
+             # "-DTFL_COMPILE_LIBRARY",
+             # "-Wno-sign-compare",
+             # copybara:uncomment_end_and_comment_begin
+-            "/DTFL_COMPILE_LIBRARY",
+-            "/wd4018",  # -Wno-sign-compare
++            "-DTFL_COMPILE_LIBRARY",
++            "-Wno-sign-compare",
+             # copybara:comment_end
+         ],
+         "//conditions:default": [
+
+
+
+index b6799ae..5b9e753 100644
+--- a/tensorflow/lite/delegates/xnnpack/mmap_handle.cc
++++ b/tensorflow/lite/delegates/xnnpack/mmap_handle.cc
+@@ -14,7 +14,7 @@ limitations under the License.
+ ==============================================================================*/
+ #include "tensorflow/lite/delegates/xnnpack/mmap_handle.h"
+ 
+-#if defined(_MSC_VER)
++#if defined(_WIN32)
+ #else
+ #include <sys/mman.h>
+ #include <unistd.h>
+@@ -74,7 +74,7 @@ bool MMapHandle::Map(const FileDescriptorView& fd, const size_t offset,
+                        "cannot mmap invalid file descriptor %d ('%s').",
+                        fd.Value(), path);
+ 
+-#if defined(_MSC_VER)
++#if defined(_WIN32)
+   struct _stat64 file_stats;
+   XNNPACK_RETURN_CHECK(_fstat64(fd.Value(), &file_stats) == 0,
+                        "could not access file stats to get size ('%s'): %s.",
+@@ -90,7 +90,7 @@ bool MMapHandle::Map(const FileDescriptorView& fd, const size_t offset,
+   ScopeGuard unmap_on_error([this] { UnMap(); });
+   size_ = file_stats.st_size - offset;
+   offset_ = offset;
+-#if defined(_MSC_VER) || defined(XNNPACK_CACHE_NO_MMAP_FOR_TEST)
++#if defined(_WIN32) || defined(XNNPACK_CACHE_NO_MMAP_FOR_TEST)
+   // This allocation is freed in UnMap and in the destructor.
+   data_ = new uint8_t[size_];
+   fd.SetPos(offset);
+@@ -130,7 +130,7 @@ bool MMapHandle::Resize(size_t new_size) {
+ 
+ void MMapHandle::UnMap() {
+   if (data_) {
+-#if defined(_MSC_VER) || defined(XNNPACK_CACHE_NO_MMAP_FOR_TEST)
++#if defined(_WIN32) || defined(XNNPACK_CACHE_NO_MMAP_FOR_TEST)
+     delete[] data_;
+ #else
+     munmap(data_, size_);
