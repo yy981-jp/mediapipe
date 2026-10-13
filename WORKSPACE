@@ -678,7 +678,7 @@ new_local_repository(
 new_local_repository(
     name = "windows_opencv",
     build_file = "@//third_party:opencv_windows.BUILD",
-    path = "c:/msys64/mingw64",
+    path = "../../../external/install/release",
 )
 
 # protobuf requires @system_python in WORKSPACE
