@@ -127,6 +127,11 @@ def _impl(ctx):
 				prefix = "lib",
 				extension = ".dll",
 			),
+            artifact_name_pattern(
+                category_name = "interface_library",
+                prefix = "lib",
+                extension = ".if.lib",
+            ),
         ]
 
     if _use_msvc_toolchain(ctx):
@@ -273,7 +278,23 @@ def _impl(ctx):
             cpp_link_static_library_action,
         ]
     else:
-        action_configs = []
+        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+            cpp_link_dynamic_library_action = action_config(
+                action_name = ACTION_NAMES.cpp_link_dynamic_library,
+                tools = [tool(path = ctx.attr.tool_paths["gcc"])],
+            )
+
+            cpp_link_nodeps_dynamic_library_action = action_config(
+                action_name = ACTION_NAMES.cpp_link_nodeps_dynamic_library,
+                tools = [tool(path = ctx.attr.tool_paths["gcc"])],
+            )
+
+            action_configs = [
+                cpp_link_dynamic_library_action,
+                cpp_link_nodeps_dynamic_library_action,
+            ]
+        else:
+            action_configs = []
 
     if _use_msvc_toolchain(ctx):
         msvc_link_env_feature = feature(
@@ -1293,6 +1314,20 @@ def _impl(ctx):
         )
 
         if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+            interface_library_output_feature = feature(
+                name = "interface_library_output",
+                enabled = True,
+                flag_sets = [
+                    flag_set(
+                        actions = [
+                            ACTION_NAMES.cpp_link_dynamic_library,
+                            ACTION_NAMES.cpp_link_nodeps_dynamic_library,
+                        ],
+                        flag_groups = [flag_group(flags = ["-Wl,--out-implib,%{output_execpath}.if.lib"])],
+                    ),
+                ],
+            )
+
             linker_param_file_feature = feature(
                 name = "linker_param_file",
                 enabled = True,
@@ -1327,6 +1362,7 @@ def _impl(ctx):
                 linker_param_file_feature,
                 default_link_flags_feature,
                 supports_dynamic_linker_feature,
+                interface_library_output_feature,
                 dbg_feature,
                 opt_feature,
             ]
