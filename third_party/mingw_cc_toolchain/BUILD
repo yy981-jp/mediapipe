@@ -3,53 +3,84 @@ load(":windows_cc_toolchain_config.bzl", "cc_toolchain_config")
 
 package(default_visibility = ["//visibility:public"])
 
-# Based on the Bazel 7.4.1 Windows config, with linker response files enabled
-# for MinGW to keep the final link command below Windows' process limit.
-cc_toolchain_config(
-    name = "msys_x64_mingw",
-    cpu = "x64_windows",
+# The UCRT64 marker mirrors Bazel's generated mingw_compiler_files target.
+# Keep its include-directory input distinct so UCRT64 actions have the correct
+# system-header path in their action keys.
+filegroup(
+    name = "ucrt64_compiler_files",
+    srcs = ["ucrt64_builtin_include_directory_paths.txt"],
+)
+
+def _register_msys2_gcc_toolchain(name, compiler, root, target_libc, compiler_files):
+    bin_path = root + "/bin"
+    config_name = "msys_x64_" + name
+    toolchain_name = "cc-compiler-x64_windows_" + name
+
+    cc_toolchain_config(
+        name = config_name,
+        cpu = "x64_windows",
+        compiler = compiler,
+        host_system_name = "local",
+        target_system_name = "local",
+        target_libc = target_libc,
+        abi_version = "local",
+        abi_libc_version = "local",
+        tool_bin_path = bin_path,
+        cxx_builtin_include_directories = [root + "/"],
+        tool_paths = {
+            tool: bin_path + "/" + tool
+            for tool in [
+                "ar",
+                "cpp",
+                "dwp",
+                "gcc",
+                "gcov",
+                "ld",
+                "nm",
+                "objcopy",
+                "objdump",
+                "strip",
+            ]
+        },
+        dbg_mode_debug_flag = "/DEBUG",
+        fastbuild_mode_debug_flag = "/DEBUG",
+    )
+
+    cc_toolchain(
+        name = toolchain_name,
+        toolchain_identifier = "msys_x64_%s_with_linker_param_file" % name,
+        toolchain_config = ":" + config_name,
+        all_files = "@local_config_cc//:empty",
+        ar_files = "@local_config_cc//:empty",
+        as_files = compiler_files,
+        compiler_files = compiler_files,
+        dwp_files = "@local_config_cc//:empty",
+        linker_files = "@local_config_cc//:empty",
+        objcopy_files = "@local_config_cc//:empty",
+        strip_files = "@local_config_cc//:empty",
+        supports_param_files = 1,
+    )
+
+_register_msys2_gcc_toolchain(
+    name = "mingw",
     compiler = "mingw-gcc",
-    host_system_name = "local",
-    target_system_name = "local",
+    root = "c:/msys64/mingw64",
     target_libc = "mingw",
-    abi_version = "local",
-    abi_libc_version = "local",
-    tool_bin_path = "c:/msys64/mingw64/bin",
-    cxx_builtin_include_directories = ["c:/msys64/mingw64/"],
-    tool_paths = {
-        "ar": "c:/msys64/mingw64/bin/ar",
-        "cpp": "c:/msys64/mingw64/bin/cpp",
-        "dwp": "c:/msys64/mingw64/bin/dwp",
-        "gcc": "c:/msys64/mingw64/bin/gcc",
-        "gcov": "c:/msys64/mingw64/bin/gcov",
-        "ld": "c:/msys64/mingw64/bin/ld",
-        "nm": "c:/msys64/mingw64/bin/nm",
-        "objcopy": "c:/msys64/mingw64/bin/objcopy",
-        "objdump": "c:/msys64/mingw64/bin/objdump",
-        "strip": "c:/msys64/mingw64/bin/strip",
-    },
-    dbg_mode_debug_flag = "/DEBUG",
-    fastbuild_mode_debug_flag = "/DEBUG",
+    compiler_files = "@local_config_cc//:mingw_compiler_files",
+)
+
+_register_msys2_gcc_toolchain(
+    name = "ucrt64",
+    compiler = "ucrt64-gcc",
+    root = "c:/msys64/ucrt64",
+    target_libc = "ucrt",
+    compiler_files = ":ucrt64_compiler_files",
 )
 
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
         "x64_windows|mingw-gcc": ":cc-compiler-x64_windows_mingw",
+        "x64_windows|ucrt64-gcc": ":cc-compiler-x64_windows_ucrt64",
     },
-)
-
-cc_toolchain(
-    name = "cc-compiler-x64_windows_mingw",
-    toolchain_identifier = "msys_x64_mingw_with_linker_param_file",
-    toolchain_config = ":msys_x64_mingw",
-    all_files = "@local_config_cc//:empty",
-    ar_files = "@local_config_cc//:empty",
-    as_files = "@local_config_cc//:mingw_compiler_files",
-    compiler_files = "@local_config_cc//:mingw_compiler_files",
-    dwp_files = "@local_config_cc//:empty",
-    linker_files = "@local_config_cc//:empty",
-    objcopy_files = "@local_config_cc//:empty",
-    strip_files = "@local_config_cc//:empty",
-    supports_param_files = 1,
 )

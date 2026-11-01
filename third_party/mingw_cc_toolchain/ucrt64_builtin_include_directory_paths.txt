@@ -1,0 +1,5 @@
+This file is maintained for the UCRT64 toolchain and acts as an input to
+Bazel compile actions so changes to the selected UCRT64 include root invalidate
+the corresponding action cache entries.
+
+c:/msys64/ucrt64/

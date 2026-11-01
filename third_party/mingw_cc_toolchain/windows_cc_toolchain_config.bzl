@@ -278,7 +278,7 @@ def _impl(ctx):
             cpp_link_static_library_action,
         ]
     else:
-        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler in ["mingw-gcc", "ucrt64-gcc"]:
             cpp_link_dynamic_library_action = action_config(
                 action_name = ACTION_NAMES.cpp_link_dynamic_library,
                 tools = [tool(path = ctx.attr.tool_paths["gcc"])],
@@ -1313,7 +1313,7 @@ def _impl(ctx):
             ],
         )
 
-        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler in ["mingw-gcc", "ucrt64-gcc"]:
             interface_library_output_feature = feature(
                 name = "interface_library_output",
                 enabled = True,
