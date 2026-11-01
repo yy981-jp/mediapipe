@@ -1,7 +1,7 @@
 diff --git a/absl/BUILD.bazel b/absl/BUILD.bazel
 --- a/absl/BUILD.bazel
 +++ b/absl/BUILD.bazel
-@@ -47,11 +47,19 @@ config_setting(
+@@ -48,11 +48,19 @@ config_setting(
      name = "mingw-gcc_compiler",
      flag_values = {
          "@bazel_tools//tools/cpp:compiler": "mingw-gcc",
@@ -21,7 +21,7 @@ diff --git a/absl/BUILD.bazel b/absl/BUILD.bazel
      name = "msvc_compiler",
      flag_values = {
          "@bazel_tools//tools/cpp:compiler": "msvc-cl",
-@@ -144,7 +152,8 @@ selects.config_setting_group(
+@@ -145,7 +153,8 @@ selects.config_setting_group(
      name = "mingw_compiler",
      match_any = [
          ":mingw_unspecified_compiler",
