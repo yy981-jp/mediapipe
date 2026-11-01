@@ -289,6 +289,10 @@ http_archive(
 # make sure to bump XNNPACK version as well and vice versa.
 http_archive(
     name = "XNNPACK",
+    patch_args = ["-p1"],
+    patches = [
+        "@//third_party:xnnpack_ucrt64.diff",
+    ],
     # `curl -L <url> | shasum -a 256`
     sha256 = "7235b2b55fbf11b64f38db130efae0f293d2d6d6fd90613221b598a8847f41c5",
     strip_prefix = "XNNPACK-68167d1fefa50296f0588ec280f48c58357ca898",
