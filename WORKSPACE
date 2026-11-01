@@ -59,6 +59,7 @@ http_archive(
     ],
     patches = [
         "@//third_party:com_google_absl_windows_patch.diff",
+        "@//third_party:com_google_absl_ucrt64.diff",
     ],
     sha256 = "f841f78243f179326f2a80b719f2887c38fe226d288ecdc46e2aa091e6aa43bc",
     strip_prefix = "abseil-cpp-9687a8ea750bfcddf790372093245a1d041b21a3",
