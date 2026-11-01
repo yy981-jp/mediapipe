@@ -1,0 +1,81 @@
+diff --git a/build_config/BUILD.bazel b/build_config/BUILD.bazel
+--- a/build_config/BUILD.bazel
++++ b/build_config/BUILD.bazel
+@@ -119,6 +119,13 @@ config_setting(
+     },
+ )
+ 
++config_setting(
++    name = "windows_x86_64_ucrt64",
++    values = {
++        "compiler": "ucrt64-gcc",
++        "cpu": "x64_windows",
++    },
++)
++
+ config_setting(
+     name = "windows_x86_64_msys",
+     values = {
+@@ -385,6 +392,7 @@ selects.config_setting_group(
+         ":windows_x86_64_clang",
+         ":windows_x86_64_mingw",
++        ":windows_x86_64_ucrt64",
+         ":windows_x86_64_msys",
+     ],
+ )
+@@ -403,6 +411,7 @@ selects.config_setting_group(
+         ":windows_x86_64_clangcl",
+         ":windows_x86_64_clang",
+         ":windows_x86_64_mingw",
++        ":windows_x86_64_ucrt64",
+     ],
+ )
+diff --git a/build_defs.bzl b/build_defs.bzl
+--- a/build_defs.bzl
++++ b/build_defs.bzl
+@@ -294,6 +294,7 @@ def xnnpack_cc_library(
+             "//build_config:windows_x86_64_clangcl": ["/clang:" + opt for opt in gcc_x86_copts],
+             "//build_config:windows_x86_64_clang": gcc_x86_copts,
+             "//build_config:windows_x86_64_mingw": mingw_copts + gcc_x86_copts,
++            "//build_config:windows_x86_64_ucrt64": mingw_copts + gcc_x86_copts,
+             "//build_config:windows_x86_64_msys": msys_copts + gcc_x86_copts,
+             "//build_config:windows_x86_64": msvc_x86_64_copts,
+@@ -310,6 +311,7 @@ def xnnpack_cc_library(
+             "//build_config:windows_x86_64_clangcl": ["/clang:" + opt for opt in gcc_copts],
+             "//build_config:windows_x86_64_clang": gcc_copts,
+             "//build_config:windows_x86_64_mingw": gcc_copts,
++            "//build_config:windows_x86_64_ucrt64": gcc_copts,
+             "//build_config:windows_x86_64_msys": gcc_copts,
+             "//build_config:windows_x86_64": msvc_copts,
+             "//conditions:default": gcc_copts,
+@@ -366,6 +368,7 @@ def xnnpack_unit_test(name, srcs, copts = [], mingw_copts = [], msys_copts = [],
+         srcs = srcs,
+         copts = xnnpack_std_cxxopts() + select({
+             "//build_config:windows_x86_64_mingw": mingw_copts,
++            "//build_config:windows_x86_64_ucrt64": mingw_copts,
+             "//build_config:windows_x86_64_msys": msys_copts,
+             "//conditions:default": [],
+         }) + select({
+@@ -374,6 +377,7 @@ def xnnpack_unit_test(name, srcs, copts = [], mingw_copts = [], msys_copts = [],
+             "//build_config:windows_x86_64_clangcl": ["/clang:-Wno-unused-function"],
+             "//build_config:windows_x86_64_clang": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64_mingw": ["-Wno-unused-function"],
++            "//build_config:windows_x86_64_ucrt64": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64_msys": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64": [],
+@@ -431,6 +435,7 @@ def xnnpack_benchmark(name, srcs, copts = [], deps = [], tags = [], defines = []):
+         copts = xnnpack_std_cxxopts() + select({
+             "//build_config:windows_x86_64_clangcl": ["/clang:-Wno-unused-function"],
+             "//build_config:windows_x86_64_clang": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64_mingw": ["-Wno-unused-function"],
++            "//build_config:windows_x86_64_ucrt64": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64_msys": ["-Wno-unused-function"],
+             "//build_config:windows_x86_64": [],
+@@ -439,6 +444,7 @@ def xnnpack_benchmark(name, srcs, copts = [], deps = [], tags = [], defines = []):
+         linkopts = select({
+             "//build_config:emscripten": xnnpack_emscripten_benchmark_linkopts(),
+             "//build_config:windows_x86_64_mingw": ["-lshlwapi"],
++            "//build_config:windows_x86_64_ucrt64": ["-lshlwapi"],
+             "//build_config:windows_x86_64_msys": ["-lshlwapi"],
+             "//conditions:default": [],
+         }),
