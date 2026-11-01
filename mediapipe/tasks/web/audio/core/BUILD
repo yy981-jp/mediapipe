@@ -1,6 +1,6 @@
 # This package contains options shared by all MediaPipe Audio Tasks for Web.
 
-load("//mediapipe/framework/port:build_config.bzl", "mediapipe_ts_library")
+load("//mediapipe/framework/port:build_config_ts.bzl", "mediapipe_ts_library")
 
 package(default_visibility = ["//mediapipe/tasks:internal"])
 

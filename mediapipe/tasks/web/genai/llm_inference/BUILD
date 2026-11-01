@@ -6,7 +6,7 @@
 # TODO: See if we can migrate to the new js_test_* rules eventually
 load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
-load("//mediapipe/framework/port:build_config.bzl", "mediapipe_ts_declaration", "mediapipe_ts_library")
+load("//mediapipe/framework/port:build_config_ts.bzl", "mediapipe_ts_declaration", "mediapipe_ts_library")
 
 package(default_visibility = ["//mediapipe/tasks:internal"])
 
