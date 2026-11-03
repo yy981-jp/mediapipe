@@ -278,7 +278,7 @@ def _impl(ctx):
             cpp_link_static_library_action,
         ]
     else:
-        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler in ["mingw-gcc", "ucrt64-gcc"]:
             cpp_link_dynamic_library_action = action_config(
                 action_name = ACTION_NAMES.cpp_link_dynamic_library,
                 tools = [tool(path = ctx.attr.tool_paths["gcc"])],
@@ -1313,7 +1313,7 @@ def _impl(ctx):
             ],
         )
 
-        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "mingw-gcc":
+        if ctx.attr.cpu == "x64_windows" and ctx.attr.compiler in ["mingw-gcc", "ucrt64-gcc"]:
             interface_library_output_feature = feature(
                 name = "interface_library_output",
                 enabled = True,
@@ -1478,6 +1478,21 @@ def _impl(ctx):
                 sysroot_feature,
             ]
 
+    builtin_include_directories = ctx.attr.cxx_builtin_include_directories
+
+    # Bazel's Windows GCC dependency scanner can canonicalize external
+    # repository headers to <output_base>/external/... . Register gemmlowp's
+    # exact repository root so those headers pass absolute-include validation.
+    # The output base is supplied by sxmp/cb.bat through --define.
+    bazel_output_base = ctx.var.get("SCALIX_BAZEL_OUTPUT_BASE", "")
+    if bazel_output_base and ctx.attr.compiler in ["mingw-gcc", "ucrt64-gcc"]:
+        bazel_output_base = bazel_output_base.replace("\\", "/")
+        if bazel_output_base.endswith("/"):
+            bazel_output_base = bazel_output_base[:-1]
+        builtin_include_directories = builtin_include_directories + [
+            bazel_output_base + "/external/gemmlowp",
+        ]
+
     tool_paths = [
         tool_path(name = name, path = path)
         for name, path in ctx.attr.tool_paths.items()
@@ -1488,7 +1503,7 @@ def _impl(ctx):
         features = features,
         action_configs = action_configs,
         artifact_name_patterns = artifact_name_patterns,
-        cxx_builtin_include_directories = ctx.attr.cxx_builtin_include_directories,
+        cxx_builtin_include_directories = builtin_include_directories,
         toolchain_identifier = ctx.attr.toolchain_identifier,
         host_system_name = ctx.attr.host_system_name,
         target_system_name = ctx.attr.target_system_name,

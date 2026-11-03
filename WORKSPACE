@@ -59,6 +59,7 @@ http_archive(
     ],
     patches = [
         "@//third_party:com_google_absl_windows_patch.diff",
+        "@//third_party:com_google_absl_ucrt64.diff",
     ],
     sha256 = "f841f78243f179326f2a80b719f2887c38fe226d288ecdc46e2aa091e6aa43bc",
     strip_prefix = "abseil-cpp-9687a8ea750bfcddf790372093245a1d041b21a3",
@@ -152,7 +153,11 @@ http_archive(
     ],
     sha256 = "b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30",
     strip_prefix = "zlib-1.2.13",
-    url = "http://zlib.net/fossils/zlib-1.2.13.tar.gz",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/zlib.net/zlib-1.2.13.tar.gz",
+        "https://mirror.bazel.build/zlib.net/zlib-1.2.13.tar.gz",
+        "https://zlib.net/fossils/zlib-1.2.13.tar.gz",
+    ],
 )
 
 # gflags needed by glog
@@ -289,6 +294,10 @@ http_archive(
 # make sure to bump XNNPACK version as well and vice versa.
 http_archive(
     name = "XNNPACK",
+    patch_args = ["-p1"],
+    patches = [
+        "@//third_party:xnnpack_ucrt64.diff",
+    ],
     # `curl -L <url> | shasum -a 256`
     sha256 = "7235b2b55fbf11b64f38db130efae0f293d2d6d6fd90613221b598a8847f41c5",
     strip_prefix = "XNNPACK-68167d1fefa50296f0588ec280f48c58357ca898",
@@ -651,7 +660,8 @@ http_archive(
 new_local_repository(
     name = "linux_opencv",
     build_file = "@//third_party:opencv_linux.BUILD",
-    path = "/usr",
+    # Use the OpenCV build owned by the parent Scalix repository.
+    path = "../../../external/install/release",
 )
 
 new_local_repository(
@@ -663,10 +673,8 @@ new_local_repository(
 new_local_repository(
     name = "macos_opencv",
     build_file = "@//third_party:opencv_macos.BUILD",
-    # For local MacOS builds, the path should point to an opencv@3 installation.
-    # If you edit the path here, you will also need to update the corresponding
-    # prefix in "opencv_macos.BUILD".
-    path = "/usr/local",  # e.g. /usr/local/Cellar for HomeBrew
+    # Use the OpenCV build owned by the parent Scalix repository.
+    path = "../../../external/install/release",
 )
 
 new_local_repository(
